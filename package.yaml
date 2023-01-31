@@ -21,6 +21,8 @@ description:
 dependencies:
 - base
 - hakyll
+- process
+- filepath
 
 ghc-options:
 - -Wall
