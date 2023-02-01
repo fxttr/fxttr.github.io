@@ -23,4 +23,3 @@ cabal.project.local~
 .ghc.environment.*
 .direnv
 _cache
-_site
