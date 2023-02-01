@@ -1,4 +1,4 @@
-module Lib (postCtx, xelatex, pdfToPng) where
+module Lib (postCtx, feedCtx, feedConfiguration, xelatex, pdfToPng) where
 import Hakyll
 import qualified System.Process as Process
 import System.FilePath (replaceExtension, takeDirectory)
@@ -8,6 +8,15 @@ postCtx tags = mconcat
     [ modificationTimeField "mtime" "%U"
     , dateField "date" "%B %e, %Y"
     , tagsField "tags" tags
+    , Context $ \key -> case key of
+        "title" -> unContext (mapContext escapeHtml defaultContext) key
+        _       -> unContext mempty key
+    , defaultContext
+    ]
+
+feedCtx :: Context String
+feedCtx = mconcat
+    [ bodyField "description"
     , Context $ \key -> case key of
         "title" -> unContext (mapContext escapeHtml defaultContext) key
         _       -> unContext mempty key
@@ -37,3 +46,12 @@ pdfToPng item = do
             ["convert", "-density", "150", "-quality", "90", pdfPath, pngPath]
         return ()
     makeItem $ TmpFile pngPath
+
+feedConfiguration :: String -> FeedConfiguration
+feedConfiguration title = FeedConfiguration
+    { feedTitle       = "fxttr - " ++ title
+    , feedDescription = "Personal blog of fxttr"
+    , feedAuthorName  = "Florian Buestgens"
+    , feedAuthorEmail = "fb@fx-ttr.de"
+    , feedRoot        = "https://fx-ttr.de"
+    }
